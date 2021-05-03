@@ -93,12 +93,12 @@ $ sudo ./mtcpclient 192.168.10.1 -N 1 -c 1 -f ./mtcpclient.conf -s 1 -r 1 -R 0
 
 The server arguments are as follows:
 ```bash
-./mtcpserver -N <#cores> -f <mtcp config file> -s <send request size> -r <receive request size> -R <#requests per TCP connection; 0 for persistent connections>
+./mtcpserver -N <num cores> -f <mtcp config file> -s <send request size> -r <receive request size> -R <num requests per TCP connection; 0 for persistent connections>
 ```
 
 The client arguments are as follows:
 ```bash
-./mtcpclient <server IP> -N <#cores> -f <mtcp config file> -s <send request size> -r <receive request size> -R <#requests per TCP connection; 0 for persistent connections>
+./mtcpclient <server IP> -N <num cores> -f <mtcp config file> -s <send request size> -r <receive request size> -R <num requests per TCP connection; 0 for persistent connections>
 ```
 
 ## Options
