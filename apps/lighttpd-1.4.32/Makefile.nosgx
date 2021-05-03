@@ -1,0 +1,164 @@
+CC=gcc
+CFLAGS=-O3 -Wall -W -Wshadow -pedantic -std=gnu99 
+DEFS=-DHAVE_CONFIG_H -DHAVE_VERSION_H -DLIBRARY_DIR="\"/usr/local/lib\"" -DSBIN_DIR="\"/usr/local/sbin\"" -D_REENTRANT -D__EXTENSIONS__ -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_LARGE_FILES -DMULTI_THREADED -DHAVE_NETMAP -DLIGHTTPD_STATIC #-DENABLE_UCTX
+PROJECT_ROOT_DIR=../..
+INCLUDE=-I. -I.. -I$(PROJECT_ROOT_DIR)/dpdk/x86_64-native-linuxapp-gcc/include -include $(PROJECT_ROOT_DIR)/dpdk/x86_64-native-linuxapp-gcc/include/rte_config.h -I$(PROJECT_ROOT_DIR)/mtcp//lib/ -I$(PROJECT_ROOT_DIR)/mtcp//src/include/ #-I$(PROJECT_ROOT_DIR)/intel_lthread/include -I$(PROJECT_ROOT_DIR)/intel_lthread/arch/x86/include 
+LDFLAGS=
+DPDK_LDFLAGS=-ldl $(PROJECT_ROOT_DIR)/lib/libuntrusted.a -lpthread -lnuma -lrt -lgmp -L$(PROJECT_ROOT_DIR)/dpdk/x86_64-native-linuxapp-gcc/lib/ -m64 -g -O3 -pthread -lrt -march=native -Wl,-export-dynamic -Wl,-lnuma -Wl,-lpthread -Wl,-lrt -Wl,-ldl -Wl,-L$(PROJECT_ROOT_DIR)/dpdk/x86_64-native-linuxapp-gcc/lib -Wl,-lrte_flow_classify -Wl,--whole-archive -Wl,-lrte_pipeline -Wl,--no-whole-archive -Wl,--whole-archive -Wl,-lrte_table -Wl,--no-whole-archive -Wl,--whole-archive -Wl,-lrte_port -Wl,--no-whole-archive -Wl,-lrte_pdump -Wl,-lrte_distributor -Wl,-lrte_ip_frag -Wl,-lrte_meter -Wl,-lrte_lpm -Wl,--whole-archive -Wl,-lrte_acl -Wl,--no-whole-archive -Wl,-lrte_jobstats -Wl,-lrte_metrics -Wl,-lrte_bitratestats -Wl,-lrte_latencystats -Wl,-lrte_power -Wl,-lrte_efd -Wl,-lrte_bpf -Wl,--whole-archive -Wl,-lrte_cfgfile -Wl,-lrte_gro -Wl,-lrte_gso -Wl,-lrte_hash -Wl,-lrte_member -Wl,-lrte_vhost -Wl,-lrte_kvargs -Wl,-lrte_mbuf -Wl,-lrte_net -Wl,-lrte_ethdev -Wl,-lrte_bbdev -Wl,-lrte_cryptodev -Wl,-lrte_security -Wl,-lrte_compressdev -Wl,-lrte_eventdev -Wl,-lrte_rawdev -Wl,-lrte_timer -Wl,-lrte_mempool -Wl,-lrte_mempool_ring -Wl,-lrte_ring -Wl,-lrte_pci -Wl,-lrte_eal -Wl,-lrte_cmdline -Wl,-lrte_reorder -Wl,-lrte_sched -Wl,-lrte_kni -Wl,-lrte_common_cpt -Wl,-lrte_common_octeontx -Wl,-lrte_common_dpaax -Wl,-lrte_bus_pci -Wl,-lrte_bus_vdev -Wl,-lrte_bus_dpaa -Wl,-lrte_bus_fslmc -Wl,-lrte_mempool_bucket -Wl,-lrte_mempool_stack -Wl,-lrte_mempool_dpaa -Wl,-lrte_mempool_dpaa2 -Wl,-lrte_pmd_af_packet -Wl,-lrte_pmd_ark -Wl,-lrte_pmd_atlantic -Wl,-lrte_pmd_avf -Wl,-lrte_pmd_avp -Wl,-lrte_pmd_axgbe -Wl,-lrte_pmd_bnxt -Wl,-lrte_pmd_bond -Wl,-lrte_pmd_cxgbe -Wl,-lrte_pmd_dpaa -Wl,-lrte_pmd_dpaa2 -Wl,-lrte_pmd_e1000 -Wl,-lrte_pmd_ena -Wl,-lrte_pmd_enetc -Wl,-lrte_pmd_enic -Wl,-lrte_pmd_fm10k -Wl,-lrte_pmd_failsafe -Wl,-lrte_pmd_i40e -Wl,-lrte_pmd_ixgbe -Wl,-lrte_pmd_kni -Wl,-lrte_pmd_lio -Wl,-lrte_pmd_nfp -Wl,-lrte_pmd_null -Wl,-lrte_pmd_qede -Wl,-lrte_pmd_ring -Wl,-lrte_pmd_softnic -Wl,-lrte_pmd_sfc_efx -Wl,-lrte_pmd_tap -Wl,-lrte_pmd_thunderx_nicvf -Wl,-lrte_pmd_vdev_netvsc -Wl,-lrte_pmd_virtio -Wl,-lrte_pmd_vhost -Wl,-lrte_pmd_ifc -Wl,-lrte_pmd_vmxnet3_uio -Wl,-lrte_bus_vmbus -Wl,-lrte_pmd_netvsc -Wl,-lrte_pmd_bbdev_null -Wl,-lrte_pmd_null_crypto -Wl,-lrte_pmd_octeontx_crypto -Wl,-lrte_pmd_crypto_scheduler -Wl,-lrte_pmd_dpaa2_sec -Wl,-lrte_pmd_dpaa_sec -Wl,-lrte_pmd_caam_jr -Wl,-lrte_pmd_virtio_crypto -Wl,-lrte_pmd_octeontx_zip -Wl,-lrte_pmd_qat -Wl,-lrte_pmd_skeleton_event -Wl,-lrte_pmd_sw_event -Wl,-lrte_pmd_dsw_event -Wl,-lrte_pmd_octeontx_ssovf -Wl,-lrte_pmd_dpaa_event -Wl,-lrte_pmd_dpaa2_event -Wl,-lrte_mempool_octeontx -Wl,-lrte_pmd_octeontx -Wl,-lrte_pmd_opdl_event -Wl,-lrte_pmd_skeleton_rawdev -Wl,-lrte_pmd_dpaa2_cmdif -Wl,-lrte_pmd_dpaa2_qdma -Wl,-lrte_bus_ifpga -Wl,-lrte_pmd_ifpga_rawdev -Wl,--no-whole-archive -Wl,-lrt -Wl,-lm -Wl,-lnuma -Wl,-ldl -m64 -g -O2,-Lno/lib64
+
+all: lighttpd
+
+LIGHTTPD_CFILES = src/server.o \
+	src/response.o \
+	src/connections.o \
+	src/network.o \
+	src/configfile.o \
+	src/configparser.o \
+	src/request.o \
+	src/proc_open.o \
+	src/buffer.o \
+	src/log.o \
+	src/keyvalue.o \
+	src/chunk.o \
+	src/http_chunk.o \
+	src/stream.o \
+	src/fdevent.o \
+	src/stat_cache.o \
+	src/plugin.o \
+	src/joblist.o \
+	src/etag.o \
+	src/array.o \
+	src/data_string.o \
+	src/data_count.o \
+	src/data_array.o \
+	src/data_integer.o \
+	src/md5.o \
+	src/data_fastcgi.o \
+	src/fdevent_select.o \
+	src/fdevent_libev.o \
+	src/fdevent_poll.o \
+	src/fdevent_linux_sysepoll.o \
+	src/fdevent_solaris_devpoll.o \
+	src/fdevent_solaris_port.o \
+	src/fdevent_freebsd_kqueue.o \
+	src/fdevent_libmtcp.o \
+	src/data_config.o \
+	src/bitset.o \
+	src/inet_ntop_cache.o \
+	src/crc32.o \
+	src/connections-glue.o \
+	src/configfile-glue.o \
+	src/http-header-glue.o \
+	src/network_write.o \
+	src/network_linux_sendfile.o \
+	src/network_freebsd_sendfile.o \
+	src/network_writev.o \
+	src/network_solaris_sendfilev.o \
+	src/network_openssl.o \
+	src/splaytree.o \
+	src/status_counter.o \
+	src/network_mtcp_writev.o \
+	src/mod_indexfile.o \
+	src/mod_dirlisting.o \
+	src/mod_staticfile.o \
+	src/mod_access.o
+
+%.o: %.c
+	$(CC) $(DEFS) $(INCLUDE) $(CFLAGS) -c -o $@ $<
+
+entry.o: entry.c
+	$(CC) $(CFLAGS) $(DEFS_RTE) $(DEFS) -D_GNU_SOURCE $(INCLUDE) -c $< -o $@
+	@echo "CC   <=  $<"
+
+lighttpd_cfiles: entry.o $(LIGHTTPD_CFILES)
+
+lighttpd: lighttpd_cfiles
+	$(CC) $(CFLAGS) -export-dynamic -o src/lighttpd entry.o $(LIGHTTPD_CFILES) $(DPDK_LDFLAGS)
+
+clean:
+	-rm -f src/lighttpd
+	-rm -f src/*o
+	-rm -f entry.o
+
+########################## NOT NECESSARY ##########################
+
+# This first long part is the modules
+## needed for configparser.c
+#$(CC) $(DEFS) $(INCLUDE) $(CFLAGS) -c -o lemon.o lemon.c
+#$(CC) $(CFLAGS) -o lemon lemon.o
+#rm -f configparser.h
+#../src/lemon -q ./configparser.y ./lempar.c
+#
+#
+#rm -f mod_ssi_exprparser.h
+#../src/lemon -q ./mod_ssi_exprparser.y ./lempar.c
+#
+#$(CC) $(DEFS) $(INCLUDE) $(CFLAGS) -c -o mod_flv_streaming.lo mod_flv_streaming.c
+#$(CC) $(CFLAGS) -module -export-dynamic -avoid-version -no-undefined -o mod_flv_streaming.la -rpath /usr/local/lib mod_flv_streaming.lo 
+#$(CC) $(DEFS) $(INCLUDE) $(CFLAGS) -c -o mod_evasive.lo mod_evasive.c
+#$(CC) $(CFLAGS) -module -export-dynamic -avoid-version -no-undefined -o mod_evasive.la -rpath /usr/local/lib mod_evasive.lo 
+#$(CC) $(DEFS) $(INCLUDE) $(CFLAGS) -c -o mod_webdav_la-mod_webdav.lo `test -f 'mod_webdav.c' || echo './'`mod_webdav.c
+#$(CC) $(CFLAGS) -module -export-dynamic -avoid-version -no-undefined -o mod_webdav.la -rpath /usr/local/lib mod_webdav_la-mod_webdav.lo  
+#$(CC) $(DEFS) $(INCLUDE) $(CFLAGS) -c -o mod_magnet_la-mod_magnet.lo `test -f 'mod_magnet.c' || echo './'`mod_magnet.c
+#$(CC) $(DEFS) $(INCLUDE) $(CFLAGS) -c -o mod_magnet_la-mod_magnet_cache.lo `test -f 'mod_magnet_cache.c' || echo './'`mod_magnet_cache.c
+#$(CC) $(CFLAGS) -module -export-dynamic -avoid-version -no-undefined -o mod_magnet.la -rpath /usr/local/lib mod_magnet_la-mod_magnet.lo mod_magnet_la-mod_magnet_cache.lo -lm 
+#$(CC) $(DEFS) $(INCLUDE) $(CFLAGS) -c -o mod_cml_la-mod_cml.lo `test -f 'mod_cml.c' || echo './'`mod_cml.c
+#$(CC) $(DEFS) $(INCLUDE) $(CFLAGS) -c -o mod_cml_la-mod_cml_lua.lo `test -f 'mod_cml_lua.c' || echo './'`mod_cml_lua.c
+#$(CC) $(DEFS) $(INCLUDE) $(CFLAGS) -c -o mod_cml_la-mod_cml_funcs.lo `test -f 'mod_cml_funcs.c' || echo './'`mod_cml_funcs.c
+#$(CC) $(CFLAGS) -module -export-dynamic -avoid-version -no-undefined -o mod_cml.la -rpath /usr/local/lib mod_cml_la-mod_cml.lo mod_cml_la-mod_cml_lua.lo mod_cml_la-mod_cml_funcs.lo -lm 
+#$(CC) $(DEFS) $(INCLUDE) $(CFLAGS) -c -o mod_trigger_b4_dl.lo mod_trigger_b4_dl.c
+#$(CC) $(CFLAGS) -module -export-dynamic -avoid-version -no-undefined -o mod_trigger_b4_dl.la -rpath /usr/local/lib mod_trigger_b4_dl.lo -lpcre 
+#$(CC) $(DEFS) $(INCLUDE) $(CFLAGS) -c -o mod_mysql_vhost_la-mod_mysql_vhost.lo `test -f 'mod_mysql_vhost.c' || echo './'`mod_mysql_vhost.c
+#$(CC) $(CFLAGS) -module -export-dynamic -avoid-version -no-undefined -o mod_mysql_vhost.la -rpath /usr/local/lib mod_mysql_vhost_la-mod_mysql_vhost.lo 
+#$(CC) $(DEFS) $(INCLUDE) $(CFLAGS) -c -o mod_cgi.lo mod_cgi.c
+#$(CC) $(CFLAGS) -module -export-dynamic -avoid-version -no-undefined -o mod_cgi.la -rpath /usr/local/lib mod_cgi.lo 
+#$(CC) $(DEFS) $(INCLUDE) $(CFLAGS) -c -o mod_scgi.lo mod_scgi.c
+#$(CC) $(CFLAGS) -module -export-dynamic -avoid-version -no-undefined -o mod_scgi.la -rpath /usr/local/lib mod_scgi.lo 
+#$(CC) $(DEFS) $(INCLUDE) $(CFLAGS) -c -o mod_setenv.lo mod_setenv.c
+#$(CC) $(CFLAGS) -module -export-dynamic -avoid-version -no-undefined -o mod_setenv.la -rpath /usr/local/lib mod_setenv.lo 
+#$(CC) $(DEFS) $(INCLUDE) $(CFLAGS) -c -o mod_alias.lo mod_alias.c
+#$(CC) $(CFLAGS) -module -export-dynamic -avoid-version -no-undefined -o mod_alias.la -rpath /usr/local/lib mod_alias.lo 
+#$(CC) $(DEFS) $(INCLUDE) $(CFLAGS) -c -o mod_userdir.lo mod_userdir.c
+#$(CC) $(CFLAGS) -module -export-dynamic -avoid-version -no-undefined -o mod_userdir.la -rpath /usr/local/lib mod_userdir.lo 
+#$(CC) $(DEFS) $(INCLUDE) $(CFLAGS) -c -o mod_rrdtool.lo mod_rrdtool.c
+#$(CC) $(CFLAGS) -module -export-dynamic -avoid-version -no-undefined -o mod_rrdtool.la -rpath /usr/local/lib mod_rrdtool.lo 
+#$(CC) $(DEFS) $(INCLUDE) $(CFLAGS) -c -o mod_usertrack.lo mod_usertrack.c
+#$(CC) $(CFLAGS) -module -export-dynamic -avoid-version -no-undefined -o mod_usertrack.la -rpath /usr/local/lib mod_usertrack.lo 
+#$(CC) $(DEFS) $(INCLUDE) $(CFLAGS) -c -o mod_proxy.lo mod_proxy.c
+#$(CC) $(CFLAGS) -module -export-dynamic -avoid-version -no-undefined -o mod_proxy.la -rpath /usr/local/lib mod_proxy.lo 
+#$(CC) $(DEFS) $(INCLUDE) $(CFLAGS) -c -o mod_ssi_exprparser.lo mod_ssi_exprparser.c
+#$(CC) $(DEFS) $(INCLUDE) $(CFLAGS) -c -o mod_ssi_expr.lo mod_ssi_expr.c
+#$(CC) $(DEFS) $(INCLUDE) $(CFLAGS) -c -o mod_ssi.lo mod_ssi.c
+#$(CC) $(CFLAGS) -module -export-dynamic -avoid-version -no-undefined -o mod_ssi.la -rpath /usr/local/lib mod_ssi_exprparser.lo mod_ssi_expr.lo mod_ssi.lo -lpcre 
+#$(CC) $(DEFS) $(INCLUDE) $(CFLAGS) -c -o mod_secure_download.lo mod_secure_download.c
+#$(CC) $(CFLAGS) -module -export-dynamic -avoid-version -no-undefined -o mod_secdownload.la -rpath /usr/local/lib mod_secure_download.lo 
+#$(CC) $(DEFS) $(INCLUDE) $(CFLAGS) -c -o mod_expire.lo mod_expire.c
+#$(CC) $(CFLAGS) -module -export-dynamic -avoid-version -no-undefined -o mod_expire.la -rpath /usr/local/lib mod_expire.lo 
+#$(CC) $(DEFS) $(INCLUDE) $(CFLAGS) -c -o mod_evhost.lo mod_evhost.c
+#$(CC) $(CFLAGS) -module -export-dynamic -avoid-version -no-undefined -o mod_evhost.la -rpath /usr/local/lib mod_evhost.lo 
+#$(CC) $(DEFS) $(INCLUDE) $(CFLAGS) -c -o mod_simple_vhost.lo mod_simple_vhost.c
+#$(CC) $(CFLAGS) -module -export-dynamic -avoid-version -no-undefined -o mod_simple_vhost.la -rpath /usr/local/lib mod_simple_vhost.lo 
+#$(CC) $(DEFS) $(INCLUDE) $(CFLAGS) -c -o mod_fastcgi.lo mod_fastcgi.c
+#$(CC) $(CFLAGS) -module -export-dynamic -avoid-version -no-undefined -o mod_fastcgi.la -rpath /usr/local/lib mod_fastcgi.lo 
+#$(CC) $(DEFS) $(INCLUDE) $(CFLAGS) -c -o mod_extforward.lo mod_extforward.c
+#$(CC) $(CFLAGS) -module -export-dynamic -avoid-version -no-undefined -o mod_extforward.la -rpath /usr/local/lib mod_extforward.lo 
+#$(CC) $(DEFS) $(INCLUDE) $(CFLAGS) -c -o mod_compress.lo mod_compress.c
+#$(CC) $(CFLAGS) -module -export-dynamic -avoid-version -no-undefined -o mod_compress.la -rpath /usr/local/lib mod_compress.lo -lz 
+#$(CC) $(DEFS) $(INCLUDE) $(CFLAGS) -c -o mod_auth.lo mod_auth.c
+#$(CC) $(DEFS) $(INCLUDE) $(CFLAGS) -c -o http_auth.lo http_auth.c
+#$(CC) $(CFLAGS) -module -export-dynamic -avoid-version -no-undefined -o mod_auth.la -rpath /usr/local/lib mod_auth.lo http_auth.lo -lcrypt 
+#$(CC) $(DEFS) $(INCLUDE) $(CFLAGS) -c -o mod_rewrite.lo mod_rewrite.c
+#$(CC) $(CFLAGS) -module -export-dynamic -avoid-version -no-undefined -o mod_rewrite.la -rpath /usr/local/lib mod_rewrite.lo -lpcre 
+#$(CC) $(DEFS) $(INCLUDE) $(CFLAGS) -c -o mod_redirect.lo mod_redirect.c
+#$(CC) $(CFLAGS) -module -export-dynamic -avoid-version -no-undefined -o mod_redirect.la -rpath /usr/local/lib mod_redirect.lo -lpcre 
+#$(CC) $(DEFS) $(INCLUDE) $(CFLAGS) -c -o mod_status.lo mod_status.c
+#$(CC) $(CFLAGS) -module -export-dynamic -avoid-version -no-undefined -o mod_status.la -rpath /usr/local/lib mod_status.lo 
+#$(CC) $(DEFS) $(INCLUDE) $(CFLAGS) -c -o mod_accesslog.lo mod_accesslog.c
+#$(CC) $(CFLAGS) -module -export-dynamic -avoid-version -no-undefined -o mod_accesslog.la -rpath /usr/local/lib mod_accesslog.lo 
+
+# proc_open debug
+#$(CC) $(DEFS) $(INCLUDE) -DDEBUG_PROC_OPEN $(CFLAGS) -c -o proc_open-proc_open.o proc_open.c
+#$(CC) $(DEFS) $(INCLUDE) -DDEBUG_PROC_OPEN $(CFLAGS) -c -o proc_open-buffer.o buffer.c
+#$(CC) $(CFLAGS) -o proc_open proc_open-proc_open.o proc_open-buffer.o 
+
+#############################################################

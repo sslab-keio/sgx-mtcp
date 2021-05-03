@@ -1,0 +1,179 @@
+CC=gcc
+CFLAGS=-O3 -Wall -W -Wshadow -pedantic -std=gnu99 
+DEFS=-DHAVE_CONFIG_H -DHAVE_VERSION_H -DLIBRARY_DIR="\"/usr/local/lib\"" -DSBIN_DIR="\"/usr/local/sbin\"" -D_REENTRANT -D__EXTENSIONS__ -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_LARGE_FILES -DMULTI_THREADED -DHAVE_NETMAP -DLIGHTTPD_STATIC -DENABLE_UCTX
+ROOT=../..
+INCLUDE=-I. -I.. -I$(ROOT)/dpdk/x86_64-native-linuxapp-gcc/include \
+        -include $(ROOT)/dpdk/x86_64-native-linuxapp-gcc/include/rte_config.h \
+        -I$(ROOT)/mtcp/src/include -I$(ROOT)/io_engine/include -I$(ROOT)/util/include -I$(ROOT)/lthread/include
+        #-I$(ROOT)/intel_lthread/include -I$(ROOT)/intel_lthread/arch/x86/include
+LDFLAGS=
+DPDK_LDFLAGS=-lpthread -lnuma -lrt -lgmp -L$(ROOT)/dpdk/x86_64-native-linuxapp-gcc/lib/ -m64 -g -O3 -pthread -lrt -march=native -Wl,-export-dynamic -Wl,-lnuma -Wl,-lpthread -Wl,-lrt -Wl,-ldl -Wl,-L$(ROOT)/dpdk/x86_64-native-linuxapp-gcc/lib -Wl,-lrte_flow_classify -Wl,--whole-archive -Wl,-lrte_pipeline -Wl,--no-whole-archive -Wl,--whole-archive -Wl,-lrte_table -Wl,--no-whole-archive -Wl,--whole-archive -Wl,-lrte_port -Wl,--no-whole-archive -Wl,-lrte_pdump -Wl,-lrte_distributor -Wl,-lrte_ip_frag -Wl,-lrte_meter -Wl,-lrte_lpm -Wl,--whole-archive -Wl,-lrte_acl -Wl,--no-whole-archive -Wl,-lrte_jobstats -Wl,-lrte_metrics -Wl,-lrte_bitratestats -Wl,-lrte_latencystats -Wl,-lrte_power -Wl,-lrte_efd -Wl,-lrte_bpf -Wl,--whole-archive -Wl,-lrte_cfgfile -Wl,-lrte_gro -Wl,-lrte_gso -Wl,-lrte_hash -Wl,-lrte_member -Wl,-lrte_vhost -Wl,-lrte_kvargs -Wl,-lrte_mbuf -Wl,-lrte_net -Wl,-lrte_ethdev -Wl,-lrte_bbdev -Wl,-lrte_cryptodev -Wl,-lrte_security -Wl,-lrte_compressdev -Wl,-lrte_eventdev -Wl,-lrte_rawdev -Wl,-lrte_timer -Wl,-lrte_mempool -Wl,-lrte_mempool_ring -Wl,-lrte_ring -Wl,-lrte_pci -Wl,-lrte_eal -Wl,-lrte_cmdline -Wl,-lrte_reorder -Wl,-lrte_sched -Wl,-lrte_kni -Wl,-lrte_common_cpt -Wl,-lrte_common_octeontx -Wl,-lrte_common_dpaax -Wl,-lrte_bus_pci -Wl,-lrte_bus_vdev -Wl,-lrte_bus_dpaa -Wl,-lrte_bus_fslmc -Wl,-lrte_mempool_bucket -Wl,-lrte_mempool_stack -Wl,-lrte_mempool_dpaa -Wl,-lrte_mempool_dpaa2 -Wl,-lrte_pmd_af_packet -Wl,-lrte_pmd_ark -Wl,-lrte_pmd_atlantic -Wl,-lrte_pmd_avf -Wl,-lrte_pmd_avp -Wl,-lrte_pmd_axgbe -Wl,-lrte_pmd_bnxt -Wl,-lrte_pmd_bond -Wl,-lrte_pmd_cxgbe -Wl,-lrte_pmd_dpaa -Wl,-lrte_pmd_dpaa2 -Wl,-lrte_pmd_e1000 -Wl,-lrte_pmd_ena -Wl,-lrte_pmd_enetc -Wl,-lrte_pmd_enic -Wl,-lrte_pmd_fm10k -Wl,-lrte_pmd_failsafe -Wl,-lrte_pmd_i40e -Wl,-lrte_pmd_ixgbe -Wl,-lrte_pmd_kni -Wl,-lrte_pmd_lio -Wl,-lrte_pmd_nfp -Wl,-lrte_pmd_null -Wl,-lrte_pmd_qede -Wl,-lrte_pmd_ring -Wl,-lrte_pmd_softnic -Wl,-lrte_pmd_sfc_efx -Wl,-lrte_pmd_tap -Wl,-lrte_pmd_thunderx_nicvf -Wl,-lrte_pmd_vdev_netvsc -Wl,-lrte_pmd_virtio -Wl,-lrte_pmd_vhost -Wl,-lrte_pmd_ifc -Wl,-lrte_pmd_vmxnet3_uio -Wl,-lrte_bus_vmbus -Wl,-lrte_pmd_netvsc -Wl,-lrte_pmd_bbdev_null -Wl,-lrte_pmd_null_crypto -Wl,-lrte_pmd_octeontx_crypto -Wl,-lrte_pmd_crypto_scheduler -Wl,-lrte_pmd_dpaa2_sec -Wl,-lrte_pmd_dpaa_sec -Wl,-lrte_pmd_caam_jr -Wl,-lrte_pmd_virtio_crypto -Wl,-lrte_pmd_octeontx_zip -Wl,-lrte_pmd_qat -Wl,-lrte_pmd_skeleton_event -Wl,-lrte_pmd_sw_event -Wl,-lrte_pmd_dsw_event -Wl,-lrte_pmd_octeontx_ssovf -Wl,-lrte_pmd_dpaa_event -Wl,-lrte_pmd_dpaa2_event -Wl,-lrte_mempool_octeontx -Wl,-lrte_pmd_octeontx -Wl,-lrte_pmd_opdl_event -Wl,-lrte_pmd_skeleton_rawdev -Wl,-lrte_pmd_dpaa2_cmdif -Wl,-lrte_pmd_dpaa2_qdma -Wl,-lrte_bus_ifpga -Wl,-lrte_pmd_ifpga_rawdev -Wl,--no-whole-archive -Wl,-lrt -Wl,-lm -Wl,-lnuma -Wl,-ldl -m64 -g -O2,-Lno/lib64
+
+all: lighttpd signed_enclave
+
+
+########## Intel SGX ############
+
+##### Parameters #####
+
+SGX_SDK ?= /opt/intel/sgxsdk
+SGX_MODE ?= SIM
+SGX_COMMON_CFLAGS := -m64
+SGX_LIBRARY_PATH := $(SGX_SDK)/lib64
+SGX_ENCLAVE_SIGNER := $(SGX_SDK)/bin/x64/sgx_sign
+SGX_EDGER8R := $(SGX_SDK)/bin/x64/sgx_edger8r
+
+SGX_COMMON_CFLAGS += -g -O2
+
+ifeq ($(SGX_MODE), HW)
+        Urts_Library_Name := sgx_urts
+        Trts_Library_Name := sgx_trts
+        Service_Library_Name := sgx_tservice
+else
+        Urts_Library_Name := sgx_urts_sim
+        Trts_Library_Name := sgx_trts_sim
+        Service_Library_Name := sgx_tservice_sim
+endif
+Crypto_Library_Name := sgx_tcrypto
+
+Enclave_Name := src/enclave.so
+Signed_Enclave_Name := src/enclave.signed.so
+
+Enclave_Config_File := $(ROOT)/sgx/enclave.config.xml
+
+App_Link_Flags := $(SGX_COMMON_CFLAGS) -L$(SGX_LIBRARY_PATH) -l$(Urts_Library_Name)
+
+ifeq ($(SGX_MODE), HW)
+        App_Link_Flags += -lsgx_uae_service
+else
+        App_Link_Flags += -lsgx_uae_service_sim
+endif
+
+##### App Objects #####
+
+App_C_Flags := $(SGX_COMMON_CFLAGS) -fPIC -Wno-attributes -Wno-implicit-function-declaration
+
+# Three configuration modes - Debug, prerelease, release
+#   Debug - Macro DEBUG enabled.
+#   Prerelease - Macro NDEBUG and EDEBUG enabled.
+#   Release - Macro NDEBUG enabled.
+ifeq ($(SGX_DEBUG), 1)
+	App_C_Flags += -DDEBUG -UNDEBUG -UEDEBUG
+else ifeq ($(SGX_PRERELEASE), 1)
+	App_C_Flags += -DNDEBUG -DEDEBUG -UDEBUG
+else
+	App_C_Flags += -DNDEBUG -UEDEBUG -UDEBUG
+endif
+
+
+##### Enclave Objects #####
+
+Enclave_Include_Paths := -I. -I$(SGX_SDK)/include -I$(SGX_SDK)/include/tlibc -I$(SGX_SDK)/include/stlport
+
+Enclave_C_Flags := $(SGX_COMMON_CFLAGS) -nostdinc -fvisibility=hidden -fpie -fstack-protector $(Enclave_Include_Paths)
+Enclave_Cpp_Flags := $(Enclave_C_Flags) -nostdinc -nostdinc++
+Enclave_Link_Flags := $(SGX_COMMON_CFLAGS) -Wl,--no-undefined -nostdlib -nodefaultlibs -nostartfiles -L$(SGX_LIBRARY_PATH) \
+	-Wl,--whole-archive -l$(Trts_Library_Name) -Wl,--no-whole-archive \
+	-Wl,--start-group -lsgx_tstdc -lsgx_tcmalloc -l$(Crypto_Library_Name) -l$(Service_Library_Name) -Wl,--end-group \
+	-Wl,-Bstatic -Wl,-Bsymbolic -Wl,--no-undefined \
+	-Wl,-pie,-eenclave_entry -Wl,--export-dynamic  \
+	-Wl,--defsym,__ImageBase=0 \
+	-Wl,--version-script=$(ROOT)/sgx/enclave.lds
+
+
+############
+# lighttpd #
+############
+
+LIGHTTPD_CFILES = src/server.o \
+	src/response.o \
+	src/connections.o \
+	src/network.o \
+	src/configfile.o \
+	src/configparser.o \
+	src/request.o \
+	src/proc_open.o \
+	src/buffer.o \
+	src/log.o \
+	src/keyvalue.o \
+	src/chunk.o \
+	src/http_chunk.o \
+	src/stream.o \
+	src/fdevent.o \
+	src/stat_cache.o \
+	src/plugin.o \
+	src/joblist.o \
+	src/etag.o \
+	src/array.o \
+	src/data_string.o \
+	src/data_count.o \
+	src/data_array.o \
+	src/data_integer.o \
+	src/md5.o \
+	src/data_fastcgi.o \
+	src/fdevent_select.o \
+	src/fdevent_libev.o \
+	src/fdevent_poll.o \
+	src/fdevent_linux_sysepoll.o \
+	src/fdevent_solaris_devpoll.o \
+	src/fdevent_solaris_port.o \
+	src/fdevent_freebsd_kqueue.o \
+	src/fdevent_libmtcp.o \
+	src/data_config.o \
+	src/bitset.o \
+	src/inet_ntop_cache.o \
+	src/crc32.o \
+	src/connections-glue.o \
+	src/configfile-glue.o \
+	src/http-header-glue.o \
+	src/network_write.o \
+	src/network_linux_sendfile.o \
+	src/network_freebsd_sendfile.o \
+	src/network_writev.o \
+	src/network_solaris_sendfilev.o \
+	src/network_openssl.o \
+	src/splaytree.o \
+	src/status_counter.o \
+	src/network_mtcp_writev.o \
+	src/mod_indexfile.o \
+	src/mod_dirlisting.o \
+	src/mod_staticfile.o \
+	src/mod_access.o
+
+%.o: %.c
+	$(eval dstbasefile=$(basename $(notdir $@)))
+	$(eval maindir=$(dir $@))
+	@$(CC) $(CFLAGS) $(DEFS) -DCOMPILE_WITH_INTEL_SGX -D_GNU_SOURCE $(INCLUDE) -I$(SGX_SDK)/include -I$(ROOT)/sgx/ -E -o $(maindir)$(dstbasefile).i $<
+	@$(CC) $(CFLAGS) $(Enclave_C_Flags) $(DEFS) -D_GNU_SOURCE $(INCLUDE) -I$(ROOT)/sgx/ -I$(SGX_SDK)/include -I. -c -o $@ $(maindir)$(dstbasefile).i
+	@echo "CC   <=  $<"
+
+# This file contains the enclave entrypoint and the new main
+entry.o: entry.c
+	$(CC) $(App_C_Flags) $(CFLAGS) -UCOMPILE_WITH_INTEL_SGX $(INCLUDE) -c $< -o $@
+	@echo "CC   <=  $<"
+
+lighttpd_cfiles: $(LIGHTTPD_CFILES) entry.o
+
+#######################
+#       enclave       #
+#######################
+
+enclave: lighttpd_cfiles
+	$(CC) $(ROOT)/sgx/enclave_t.o $(ROOT)/sgx/enclaveshim_ocalls.o $(LIGHTTPD_CFILES) -L $(ROOT)/mtcp/lib $(ROOT)/mtcp/lib/libmtcp.a -o $(Enclave_Name) $(Enclave_Link_Flags)
+	@echo "LINK =>  $(Enclave_Name)"
+
+signed_enclave: enclave
+	@$(SGX_ENCLAVE_SIGNER) sign -key $(ROOT)/sgx/enclave_private.pem -enclave $(Enclave_Name) -out $(Signed_Enclave_Name) -config $(Enclave_Config_File)
+	@echo "SIGN =>  $(Signed_Enclave_Name)"
+	@rm $(Enclave_Name)
+
+lighttpd: lighttpd_cfiles signed_enclave
+	$(CC) $(CFLAGS) $(LDFLAGS) entry.o -L $(ROOT)/lib $(ROOT)/lib/libuntrusted.a $(App_Link_Flags) -luntrusted -levent $(DPDK_LDFLAGS) -o src/lighttpd
+
+clean:
+	-rm -f src/lighttpd
+	-rm -f src/*o
+	-rm -f entry.o
+	-rm -f src/enclave*so
+	-rm -f "$(Signed_Enclave_Name)"
+

@@ -1,0 +1,275 @@
+CC=gcc
+CFLAGS=-m64 -pthread -march=native -g -O2 -m64 -Wall -fPIC -fgnu89-inline -Werror
+DEFS_RTE=-DRTE_MACHINE_CPUFLAG_SSE -DRTE_MACHINE_CPUFLAG_SSE2 -DRTE_MACHINE_CPUFLAG_SSE3 -DRTE_MACHINE_CPUFLAG_SSSE3 \
+     -DRTE_MACHINE_CPUFLAG_SSE4_1 -DRTE_MACHINE_CPUFLAG_SSE4_2 -DRTE_MACHINE_CPUFLAG_AES \
+     -DRTE_MACHINE_CPUFLAG_PCLMULQDQ -DRTE_MACHINE_CPUFLAG_AVX -DRTE_MACHINE_CPUFLAG_RDRAND \
+     -DRTE_MACHINE_CPUFLAG_FSGSBASE -DRTE_MACHINE_CPUFLAG_F16C -DRTE_MACHINE_CPUFLAG_AVX2
+DEFS=-DNETSTAT -DINFO -DDBGERR -DDBGCERR -DDBGFUNC -DSTREAM -DSTATE -DTSTAT -DAPP -DEPOLL \
+     -DDISABLE_PSIO -DDISABLE_NETMAP -DENABLE_UCTX 
+INCLUDE=-I./dpdk/x86_64-native-linuxapp-gcc/include \
+        -include ./dpdk/x86_64-native-linuxapp-gcc/include/rte_config.h \
+        -I./mtcp/src/include -I./io_engine/include -I./util/include -I./lthread/include
+LDFLAGS=-pthread -lrt -march=native -lpthread -ldl -lnuma
+DPDK_LDFLAGS=-lpthread -L./dpdk/x86_64-native-linuxapp-gcc/lib -L./dpdk/x86_64-native-linuxapp-gcc/lib \
+	-Wl,-lrte_flow_classify -Wl,--whole-archive -Wl,-lrte_pipeline -Wl,--no-whole-archive -Wl,--whole-archive \
+	-Wl,-lrte_table -Wl,--no-whole-archive -Wl,--whole-archive -Wl,-lrte_port -Wl,--no-whole-archive -Wl,-lrte_pdump \
+	-Wl,-lrte_distributor -Wl,-lrte_ip_frag -Wl,-lrte_meter -Wl,-lrte_lpm -Wl,--whole-archive -Wl,-lrte_acl \
+	-Wl,--no-whole-archive -Wl,-lrte_jobstats -Wl,-lrte_metrics -Wl,-lrte_bitratestats -Wl,-lrte_latencystats \
+	-Wl,-lrte_power -Wl,-lrte_efd -Wl,-lrte_bpf -Wl,--whole-archive -Wl,-lrte_cfgfile -Wl,-lrte_gro -Wl,-lrte_gso \
+	-Wl,-lrte_hash -Wl,-lrte_member -Wl,-lrte_vhost -Wl,-lrte_kvargs -Wl,-lrte_mbuf -Wl,-lrte_net -Wl,-lrte_ethdev \
+	-Wl,-lrte_bbdev -Wl,-lrte_cryptodev -Wl,-lrte_security -Wl,-lrte_compressdev -Wl,-lrte_eventdev -Wl,-lrte_rawdev \
+	-Wl,-lrte_timer -Wl,-lrte_mempool -Wl,-lrte_mempool_ring -Wl,-lrte_ring -Wl,-lrte_pci -Wl,-lrte_eal \
+	-Wl,-lrte_cmdline -Wl,-lrte_reorder -Wl,-lrte_sched -Wl,-lrte_kni -Wl,-lrte_common_cpt -Wl,-lrte_common_octeontx \
+	-Wl,-lrte_common_dpaax -Wl,-lrte_bus_pci -Wl,-lrte_bus_vdev -Wl,-lrte_bus_dpaa -Wl,-lrte_bus_fslmc \
+	-Wl,-lrte_mempool_bucket -Wl,-lrte_mempool_stack -Wl,-lrte_mempool_dpaa -Wl,-lrte_mempool_dpaa2 \
+	-Wl,-lrte_pmd_af_packet -Wl,-lrte_pmd_ark -Wl,-lrte_pmd_atlantic -Wl,-lrte_pmd_avf -Wl,-lrte_pmd_avp \
+	-Wl,-lrte_pmd_axgbe -Wl,-lrte_pmd_bnxt -Wl,-lrte_pmd_bond -Wl,-lrte_pmd_cxgbe -Wl,-lrte_pmd_dpaa \
+	-Wl,-lrte_pmd_dpaa2 -Wl,-lrte_pmd_e1000 -Wl,-lrte_pmd_ena -Wl,-lrte_pmd_enetc -Wl,-lrte_pmd_enic \
+	-Wl,-lrte_pmd_fm10k -Wl,-lrte_pmd_failsafe -Wl,-lrte_pmd_i40e -Wl,-lrte_pmd_ixgbe -Wl,-lrte_pmd_kni \
+	-Wl,-lrte_pmd_lio -Wl,-lrte_pmd_nfp -Wl,-lrte_pmd_null -Wl,-lrte_pmd_qede -Wl,-lrte_pmd_ring -Wl,-lrte_pmd_softnic \
+	-Wl,-lrte_pmd_sfc_efx -Wl,-lrte_pmd_tap -Wl,-lrte_pmd_thunderx_nicvf -Wl,-lrte_pmd_vdev_netvsc -Wl,-lrte_pmd_virtio \
+	-Wl,-lrte_pmd_vhost -Wl,-lrte_pmd_ifc -Wl,-lrte_pmd_vmxnet3_uio -Wl,-lrte_bus_vmbus -Wl,-lrte_pmd_netvsc \
+	-Wl,-lrte_pmd_bbdev_null -Wl,-lrte_pmd_null_crypto -Wl,-lrte_pmd_octeontx_crypto -Wl,-lrte_pmd_crypto_scheduler \
+	-Wl,-lrte_pmd_dpaa2_sec -Wl,-lrte_pmd_dpaa_sec -Wl,-lrte_pmd_caam_jr -Wl,-lrte_pmd_virtio_crypto \
+	-Wl,-lrte_pmd_octeontx_zip -Wl,-lrte_pmd_qat -Wl,-lrte_pmd_skeleton_event -Wl,-lrte_pmd_sw_event \
+	-Wl,-lrte_pmd_dsw_event -Wl,-lrte_pmd_octeontx_ssovf -Wl,-lrte_pmd_dpaa_event -Wl,-lrte_pmd_dpaa2_event \
+	-Wl,-lrte_mempool_octeontx -Wl,-lrte_pmd_octeontx -Wl,-lrte_pmd_opdl_event -Wl,-lrte_pmd_skeleton_rawdev \
+	-Wl,-lrte_pmd_dpaa2_cmdif -Wl,-lrte_pmd_dpaa2_qdma -Wl,-lrte_bus_ifpga -Wl,-lrte_pmd_ifpga_rawdev \
+	-Wl,-lrte_pmd_mlx5 -Wl,-libverbs -Wl,-lmlx5 -Wl,-lmnl \
+	-Wl,--no-whole-archive -Wl,-lrt -Wl,-lm -Wl,-lnuma -Wl,-ldl
+
+
+all: enclaveshim_dependencies untrustedlib mtcplib
+
+
+########## Intel SGX ############
+
+##### Parameters #####
+
+SGX_SDK ?= /opt/intel/sgxsdk
+SGX_MODE ?= SIM
+SGX_COMMON_CFLAGS := -m64
+SGX_LIBRARY_PATH := $(SGX_SDK)/lib64
+SGX_ENCLAVE_SIGNER := $(SGX_SDK)/bin/x64/sgx_sign
+SGX_EDGER8R := $(SGX_SDK)/bin/x64/sgx_edger8r
+
+SGX_COMMON_CFLAGS += -g -O2
+
+ifeq ($(SGX_MODE), HW)
+	Urts_Library_Name := sgx_urts
+	Trts_Library_Name := sgx_trts
+	Service_Library_Name := sgx_tservice
+else
+	Urts_Library_Name := sgx_urts_sim
+	Trts_Library_Name := sgx_trts_sim
+	Service_Library_Name := sgx_tservice_sim
+endif
+Crypto_Library_Name := sgx_tcrypto
+
+Enclave_Name := ./enclave.so
+Signed_Enclave_Name := ./enclave.signed.so
+
+Enclave_Config_File := sgx/enclave.config.xml
+
+App_Link_Flags := $(SGX_COMMON_CFLAGS) -L$(SGX_LIBRARY_PATH) -l$(Urts_Library_Name)
+
+ifeq ($(SGX_MODE), HW)
+	App_Link_Flags += -lsgx_uae_service
+else
+	App_Link_Flags += -lsgx_uae_service_sim
+endif
+
+
+#######################
+#       Enclave       #
+#######################
+
+App_C_Flags := $(SGX_COMMON_CFLAGS) -fPIC -Wno-attributes -Wno-implicit-function-declaration
+
+# Three configuration modes - Debug, prerelease, release
+#   Debug - Macro DEBUG enabled.
+#   Prerelease - Macro NDEBUG and EDEBUG enabled.
+#   Release - Macro NDEBUG enabled.
+ifeq ($(SGX_DEBUG), 1)
+	App_C_Flags += -DDEBUG -UNDEBUG -UEDEBUG
+else ifeq ($(SGX_PRERELEASE), 1)
+	App_C_Flags += -DNDEBUG -DEDEBUG -UDEBUG
+else
+	App_C_Flags += -DNDEBUG -UEDEBUG -UDEBUG
+endif
+
+sgx/enclave_u.c: $(SGX_EDGER8R) sgx/enclave.edl
+	@cd sgx && $(SGX_EDGER8R) --untrusted enclave.edl --search-path . --search-path $(SGX_SDK)/include
+	@echo "GEN  =>  $@"
+
+sgx/enclave_u.o: sgx/enclave_u.c
+	@$(CC) $(App_C_Flags) $(CFLAGS) $(DEFS_RTE) -I$(SGX_SDK)/include $(INCLUDE) -c $< -o $@
+	@echo "CC   <=  $<"
+
+sgx/enclaveshim_ecalls.o: sgx/enclaveshim_ecalls.c
+	@$(CC) $(App_C_Flags) $(CFLAGS) $(DEFS_RTE) -I$(SGX_SDK)/include $(INCLUDE) -c $< -o $@
+	@echo "CC   <=  $<"
+
+sgx/ocalls.o: sgx/ocalls.c
+	@$(CC) $(App_C_Flags) $(CFLAGS) $(DEFS_RTE) -I$(SGX_SDK)/include -I../include $(INCLUDE) -c $< -o $@
+	@echo "CC   <=  $<"
+
+
+Enclave_Include_Paths := -I. -I$(SGX_SDK)/include -I$(SGX_SDK)/include/tlibc -I$(SGX_SDK)/include/stlport
+
+Enclave_C_Flags := $(SGX_COMMON_CFLAGS) -nostdinc -fvisibility=hidden -fpie -fstack-protector $(Enclave_Include_Paths)
+Enclave_Cpp_Flags := $(Enclave_C_Flags) -nostdinc -nostdinc++
+Enclave_Link_Flags := $(SGX_COMMON_CFLAGS) -Wl,--no-undefined -nostdlib -nodefaultlibs -nostartfiles -L$(SGX_LIBRARY_PATH) \
+	-Wl,--whole-archive -l$(Trts_Library_Name) -Wl,--no-whole-archive \
+	-Wl,--start-group -lsgx_tstdc -lsgx_tcmalloc -l$(Crypto_Library_Name) -l$(Service_Library_Name) -Wl,--end-group \
+	-Wl,-Bstatic -Wl,-Bsymbolic -Wl,--no-undefined \
+	-Wl,-pie,-eenclave_entry -Wl,--export-dynamic  \
+	-Wl,--defsym,__ImageBase=0 \
+	-Wl,--version-script=sgx/enclave.lds
+
+sgx/enclave_t.c: $(SGX_EDGER8R) sgx/enclave.edl
+	@cd sgx && $(SGX_EDGER8R) --trusted enclave.edl --search-path . --search-path $(SGX_SDK)/include
+	@echo "GEN  =>  $@"
+
+sgx/enclave_t.o: sgx/enclave_t.c
+	@$(CC) $(Enclave_C_Flags) -DSGX_DEFINE_STRUCTURES -c $< -o $@
+	@echo "CC   <=  $<"
+
+sgx/enclaveshim_ocalls.o: sgx/enclaveshim_ocalls.c sgx/enclave_t.c sgx/enclaveshim_ocalls.h
+	$(eval srcbasefile=$(basename $@))
+	$(CC) $(CFLAGS) $(DEFS_RTE) $(DEFS) -DCOMPILE_WITH_INTEL_SGX $(INCLUDE) -I$(SGX_SDK)/include -Isgx/ -E -o $(srcbasefile).i $<
+	$(CC) $(CFLAGS) $(Enclave_C_Flags) $(DEFS_RTE) $(DEFS) $(INCLUDE) -I$(SGX_SDK)/include -fPIC -DPIC -c -o $@ $(srcbasefile).i
+	@echo "CC  <=  $<"
+
+enclaveshim_dependencies: sgx/enclave_u.o sgx/enclaveshim_ecalls.o sgx/ocalls.o sgx/enclaveshim_ocalls.o sgx/enclave_t.o
+
+
+#######################
+#     mtcp files      #
+#######################
+
+mtcp/src/memory_mgt-nosgx.o: mtcp/src/memory_mgt.c
+	@$(CC) $(CFLAGS) $(DEFS_RTE) $(DEFS) -UCOMPILE_WITH_INTEL_SGX -UENABLE_UCTX -D_GNU_SOURCE $(INCLUDE) -c -o $@ $<
+	@echo "CC   <=  $<"
+
+mtcp/src/dpdk_module-nosgx.o: mtcp/src/dpdk_module.c
+	@$(CC) $(CFLAGS) $(DEFS_RTE) $(DEFS) -UCOMPILE_WITH_INTEL_SGX -UENABLE_UCTX -D_GNU_SOURCE $(INCLUDE) -c -o $@ $<
+	@echo "CC   <=  $<"
+
+mtcp/src/rss-nosgx.o: mtcp/src/rss.c
+	@$(CC) $(CFLAGS) $(DEFS_RTE) $(DEFS) -UCOMPILE_WITH_INTEL_SGX -UENABLE_UCTX -D_GNU_SOURCE $(INCLUDE) -c -o $@ $<
+	@echo "CC   <=  $<"
+
+
+#######################
+#     main wrapper    #
+#######################
+
+untrustedlib: sgx/enclave_u.o sgx/enclaveshim_ecalls.o sgx/ocalls.o mtcp/src/memory_mgt-nosgx.o mtcp/src/dpdk_module-nosgx.o mtcp/src/rss-nosgx.o
+	@mkdir -p ./lib
+	ar rvs ./lib/libuntrusted.a $^
+	@echo "LINK   =>  $@"
+
+
+#######################
+#   lthread library   #
+#######################
+
+LTHREAD_FILES= \
+	lthread/lthread.o \
+	lthread/lthread_sched.o \
+	lthread/ecall_queue.o \
+	lthread/mpmc_queue.o \
+
+lthread/%.o: lthread/%.c
+	$(eval dstbasefile=$(basename $(notdir $@)))
+	$(eval maindir=$(dir $@))
+	@$(CC) $(CFLAGS) $(DEFS_RTE) $(DEFS) -DCOMPILE_WITH_INTEL_SGX -D_GNU_SOURCE $(INCLUDE) -I$(SGX_SDK)/include -Isgx/ -E -o $(maindir)$(dstbasefile).i $<
+	@$(CC) $(CFLAGS) $(Enclave_C_Flags) $(DEFS_RTE) $(DEFS) -D_GNU_SOURCE $(INCLUDE) -I$(SGX_SDK)/include -Isgx/ -c -o $@ $(maindir)$(dstbasefile).i
+	@echo "CC   <=  $<"
+
+lthread_files: $(LTHREAD_FILES)
+
+
+#######################
+#    mtcp library     #
+#######################
+
+MTCPLIB_FILES= \
+	mtcp/src/core.o \
+	mtcp/src/tcp_stream.o \
+	mtcp/src/config.o \
+	mtcp/src/api.o \
+	mtcp/src/eventpoll.o \
+	mtcp/src/socket.o \
+	mtcp/src/pipe.o \
+	mtcp/src/tcp_util.o \
+	mtcp/src/eth_in.o \
+	mtcp/src/ip_in.o \
+	mtcp/src/tcp_in.o \
+	mtcp/src/eth_out.o \
+	mtcp/src/ip_out.o \
+	mtcp/src/tcp_out.o \
+	mtcp/src/arp.o \
+	mtcp/src/timer.o \
+	mtcp/src/cpu.o \
+	mtcp/src/rss.o \
+	mtcp/src/addr_pool.o \
+	mtcp/src/fhash.o \
+	mtcp/src/memory_mgt.o \
+	mtcp/src/logger.o \
+	mtcp/src/debug.o \
+	mtcp/src/tcp_rb_frag_queue.o \
+	mtcp/src/tcp_ring_buffer.o \
+	mtcp/src/tcp_send_buffer.o \
+	mtcp/src/tcp_sb_queue.o \
+	mtcp/src/tcp_stream_queue.o \
+	mtcp/src/psio_module.o \
+	mtcp/src/io_module.o \
+	mtcp/src/dpdk_module.o \
+	mtcp/src/netmap_module.o \
+	mtcp/src/onvm_module.o \
+	mtcp/src/icmp.o \
+	mtcp/src/schedule.o \
+	mtcp/src/thread_wrapper.o \
+
+mtcp/src/%.o: mtcp/src/%.c
+	$(eval dstbasefile=$(basename $(notdir $@)))
+	$(eval maindir=$(dir $@))
+	@$(CC) $(CFLAGS) $(DEFS_RTE) $(DEFS) -DCOMPILE_WITH_INTEL_SGX -D_GNU_SOURCE $(INCLUDE) -I$(SGX_SDK)/include -Isgx/ -E -o $(maindir)$(dstbasefile).i $<
+	@$(CC) $(CFLAGS) $(Enclave_C_Flags) $(DEFS_RTE) $(DEFS) -D_GNU_SOURCE $(INCLUDE) -I$(SGX_SDK)/include -Isgx/ -c -o $@ $(maindir)$(dstbasefile).i
+	@echo "CC   <=  $<"
+
+mtcplib_files: lthread_files $(MTCPLIB_FILES)
+
+
+#######################
+#     util files      #
+#######################
+
+UTIL_FILES= \
+	util/util.o
+
+util/%.o: util/%.c
+	$(eval dstbasefile=$(basename $(notdir $@)))
+	$(eval maindir=$(dir $@))
+	@$(CC) $(CFLAGS) $(DEFS_RTE) $(DEFS) -DCOMPILE_WITH_INTEL_SGX $(INCLUDE) -I$(SGX_SDK)/include -Isgx/ -E -o $(maindir)$(dstbasefile).i $<
+	@$(CC) $(CFLAGS) $(Enclave_C_Flags) $(DEFS_RTE) $(DEFS) $(INCLUDE) -I$(SGX_SDK)/include -Isgx/ -c -o $@ $(maindir)$(dstbasefile).i
+	@echo "CC   <=  $<"
+
+util_files: $(UTIL_FILES)
+
+
+mtcplib: $(UTIL_FILES) $(MTCPLIB_FILES) $(LTHREAD_FILES)
+	@mkdir -p ./mtcp/lib
+	ar rvs ./mtcp/lib/libmtcp.a $^
+	@echo "LINK   =>  $@"
+
+
+clean:
+	-find . -iname "*\.o" -delete
+	-find . -iname "*\.i" -delete
+	-rm -f ./lib/libuntrusted.a
+	-rm -f ./mtcp/lib/libmtcp.a
+	-find . -iname "enclave_u.?" -delete
+	-find . -iname "enclave_t.?" -delete

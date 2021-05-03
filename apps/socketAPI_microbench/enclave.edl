@@ -1,0 +1,33 @@
+enclave {
+	from "sgx_tstdc.edl" import *;
+	include "user_types.h"
+
+	trusted {
+		public void ecall_start_client_thread(int core, [user_check] int* done,  int _send_packet_size, int _receive_packet_size, int _reqs_per_conn, int _thr_limit);
+	};
+	
+	untrusted {
+		/* 
+		 * ocall_print_string - invokes OCALL to display string buffer inside the enclave.
+		 * ocall_println_string - same as ocall_print_string but with a new line
+		 *  [in]: copy the string buffer to App outside.
+		 *  [string]: specifies 'str' is a NULL terminated buffer.
+		 */
+		void ocall_print_string([in, string] const char* str);
+		void ocall_println_string([in, string] const char* str);
+
+		void ocall_exit(int s);
+		int ocall_close(int fd);
+
+		int ocall_accept(int sockfd, [in, size=addrlen] struct sockaddr *addr, socklen_t addrlen) propagate_errno;
+		int ocall_setsockopt(int sockfd, int level, int optname, [in, size=optlen] const void *optval, socklen_t optlen) propagate_errno;
+
+		void ocall_perror([in, string] const char *s) propagate_errno;
+		ssize_t ocall_recv(int sockfd, [out, size=len] void *buf, size_t len, int flags) propagate_errno;
+		ssize_t ocall_send(int sockfd, [in, size=len] const void *buf, size_t len, int flags) propagate_errno;
+		int ocall_socket(int domain, int type, int protocol) propagate_errno;
+		int ocall_bind(int sockfd, [in, size=addrlen] const struct sockaddr *addr, socklen_t addrlen) propagate_errno;
+		int ocall_listen(int sockfd, int backlog) propagate_errno;
+		int ocall_select(int nfds, [in, out] fd_set *readfds, [in, out] fd_set *writefds, [in, out] fd_set *exceptfds, [in, out] struct timeval *timeout) propagate_errno;
+	};
+};
